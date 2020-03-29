@@ -14,6 +14,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 
 /**
  * @author lvbo
@@ -31,19 +32,25 @@ public class Server {
         serverBootstrap.channel(NioServerSocketChannel.class);
         serverBootstrap.handler(new LoggingHandler(LogLevel.INFO));
 
-        NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("boss"));
+        NioEventLoopGroup workGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("worker"));
+
+        LoggingHandler debugLoggingHandler = new LoggingHandler(LogLevel.DEBUG);
+        LoggingHandler infoLoggingHandler = new LoggingHandler(LogLevel.INFO);
+
         try {
-            serverBootstrap.group(nioEventLoopGroup);
+            serverBootstrap.group(bossGroup, workGroup);
             serverBootstrap.childHandler(new ChannelInitializer<NioSocketChannel>() {
                 @Override
                 protected void initChannel(NioSocketChannel ch) throws Exception {
                     ch.pipeline()
-                            .addLast(new FrameEncoder())
-                            .addLast(new FrameDecoder())
-                            .addLast(new ProcotolEncoder())
-                            .addLast(new ProcotolDecoder())
-                            .addLast(new LoggingHandler(LogLevel.INFO))
-                            .addLast(new OperationHandler());
+                            .addLast("debugLoggingHanlder", debugLoggingHandler)
+                            .addLast("frameeEncoder", new FrameEncoder())
+                            .addLast("frameDecoder", new FrameDecoder())
+                            .addLast("procotolEncoder", new ProcotolEncoder())
+                            .addLast("procotolDecoder", new ProcotolDecoder())
+                            .addLast("infoLoggingHandler", infoLoggingHandler)
+                            .addLast("operationHandler", new OperationHandler());
 
                 }
             });
@@ -51,7 +58,8 @@ public class Server {
             ChannelFuture channelFuture = serverBootstrap.bind(8090).sync();
             channelFuture.channel().closeFuture().sync();
         } finally {
-            nioEventLoopGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+            workGroup.shutdownGracefully();
         }
     }
 }
