@@ -4,6 +4,7 @@ import io.github.lvbo.learn.netty.server.codec.decoder.FrameDecoder;
 import io.github.lvbo.learn.netty.server.codec.decoder.ProcotolDecoder;
 import io.github.lvbo.learn.netty.server.codec.encoder.FrameEncoder;
 import io.github.lvbo.learn.netty.server.codec.encoder.ProcotolEncoder;
+import io.github.lvbo.learn.netty.server.handler.MetricHandler;
 import io.github.lvbo.learn.netty.server.handler.OperationHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -38,6 +39,8 @@ public class Server {
         LoggingHandler debugLoggingHandler = new LoggingHandler(LogLevel.DEBUG);
         LoggingHandler infoLoggingHandler = new LoggingHandler(LogLevel.INFO);
 
+        MetricHandler metricHandler = new MetricHandler();
+
         try {
             serverBootstrap.group(bossGroup, workGroup);
             serverBootstrap.childHandler(new ChannelInitializer<NioSocketChannel>() {
@@ -45,6 +48,7 @@ public class Server {
                 protected void initChannel(NioSocketChannel ch) throws Exception {
                     ch.pipeline()
                             .addLast("debugLoggingHanlder", debugLoggingHandler)
+                            .addLast("metricHandler", metricHandler)
                             .addLast("frameeEncoder", new FrameEncoder())
                             .addLast("frameDecoder", new FrameDecoder())
                             .addLast("procotolEncoder", new ProcotolEncoder())
