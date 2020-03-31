@@ -16,6 +16,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
 
 /**
  * @author lvbo
@@ -35,6 +37,7 @@ public class Server {
 
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("boss"));
         NioEventLoopGroup workGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("worker"));
+        EventExecutor businessGroup = new UnorderedThreadPoolEventExecutor(10, new DefaultThreadFactory("business"));
 
         LoggingHandler debugLoggingHandler = new LoggingHandler(LogLevel.DEBUG);
         LoggingHandler infoLoggingHandler = new LoggingHandler(LogLevel.INFO);
@@ -54,7 +57,7 @@ public class Server {
                             .addLast("procotolEncoder", new ProcotolEncoder())
                             .addLast("procotolDecoder", new ProcotolDecoder())
                             .addLast("infoLoggingHandler", infoLoggingHandler)
-                            .addLast("operationHandler", new OperationHandler());
+                            .addLast(businessGroup, new OperationHandler());
 
                 }
             });
