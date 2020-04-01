@@ -13,6 +13,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.flush.FlushConsolidationHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -57,6 +58,7 @@ public class Server {
                             .addLast("procotolEncoder", new ProcotolEncoder())
                             .addLast("procotolDecoder", new ProcotolDecoder())
                             .addLast("infoLoggingHandler", infoLoggingHandler)
+                            .addLast("flushEnhance", new FlushConsolidationHandler(10, true))
                             .addLast(businessGroup, new OperationHandler());
 
                 }
