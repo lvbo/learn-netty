@@ -16,6 +16,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.flush.FlushConsolidationHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
@@ -39,9 +40,11 @@ public class Server {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("boss"));
         NioEventLoopGroup workGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("worker"));
         EventExecutor businessGroup = new UnorderedThreadPoolEventExecutor(10, new DefaultThreadFactory("business"));
+        NioEventLoopGroup trafficSharpingGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("TS"));
 
         LoggingHandler debugLoggingHandler = new LoggingHandler(LogLevel.DEBUG);
         LoggingHandler infoLoggingHandler = new LoggingHandler(LogLevel.INFO);
+        GlobalTrafficShapingHandler globalTrafficShapingHandler = new GlobalTrafficShapingHandler(trafficSharpingGroup, 10 * 1024 * 1024, 10 * 1024 * 1024);
 
         MetricHandler metricHandler = new MetricHandler();
 
@@ -52,6 +55,7 @@ public class Server {
                 protected void initChannel(NioSocketChannel ch) throws Exception {
                     ch.pipeline()
                             .addLast("debugLoggingHanlder", debugLoggingHandler)
+                            .addLast("trafficSharpingHandler", globalTrafficShapingHandler)
                             .addLast("metricHandler", metricHandler)
                             .addLast("frameeEncoder", new FrameEncoder())
                             .addLast("frameDecoder", new FrameDecoder())
