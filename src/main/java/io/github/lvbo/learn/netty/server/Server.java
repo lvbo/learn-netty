@@ -6,6 +6,7 @@ import io.github.lvbo.learn.netty.server.codec.encoder.FrameEncoder;
 import io.github.lvbo.learn.netty.server.codec.encoder.ProcotolEncoder;
 import io.github.lvbo.learn.netty.server.handler.MetricHandler;
 import io.github.lvbo.learn.netty.server.handler.OperationHandler;
+import io.github.lvbo.learn.netty.server.handler.ServerIdleStateHanlder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -55,6 +56,7 @@ public class Server {
                 protected void initChannel(NioSocketChannel ch) throws Exception {
                     ch.pipeline()
                             .addLast("debugLoggingHanlder", debugLoggingHandler)
+                            .addLast("idleHanlder", new ServerIdleStateHanlder())
                             .addLast("trafficSharpingHandler", globalTrafficShapingHandler)
                             .addLast("metricHandler", metricHandler)
                             .addLast("frameeEncoder", new FrameEncoder())
