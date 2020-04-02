@@ -1,4 +1,6 @@
-package io.github.lvbo.learn.netty.common;
+package io.github.lvbo.learn.netty.common.operation;
+
+import io.github.lvbo.learn.netty.common.MessageBody;
 
 /**
  * @author lvbo

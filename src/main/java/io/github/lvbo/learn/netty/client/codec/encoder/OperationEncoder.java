@@ -1,6 +1,6 @@
 package io.github.lvbo.learn.netty.client.codec.encoder;
 
-import io.github.lvbo.learn.netty.common.Operation;
+import io.github.lvbo.learn.netty.common.operation.Operation;
 import io.github.lvbo.learn.netty.common.RequestMessage;
 import io.github.lvbo.learn.netty.util.StreamIDGenerator;
 import io.netty.channel.ChannelHandlerContext;

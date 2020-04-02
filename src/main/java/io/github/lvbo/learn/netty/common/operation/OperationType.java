@@ -1,7 +1,9 @@
-package io.github.lvbo.learn.netty.common;
+package io.github.lvbo.learn.netty.common.operation;
 
-import io.github.lvbo.learn.netty.common.order.OrderOperation;
-import io.github.lvbo.learn.netty.common.order.OrderOperationResult;
+import io.github.lvbo.learn.netty.common.operation.keepalive.KeepaliveOperation;
+import io.github.lvbo.learn.netty.common.operation.keepalive.KeepaliveOperationResult;
+import io.github.lvbo.learn.netty.common.operation.order.OrderOperation;
+import io.github.lvbo.learn.netty.common.operation.order.OrderOperationResult;
 
 /**
  * @author lvbo
@@ -9,7 +11,8 @@ import io.github.lvbo.learn.netty.common.order.OrderOperationResult;
  * @date 2020/3/18 08:09
  */
 public enum OperationType {
-    ORDER(3, OrderOperation.class, OrderOperationResult.class);
+    ORDER(3, OrderOperation.class, OrderOperationResult.class),
+    KEEPALIVE(1,KeepaliveOperation.class, KeepaliveOperationResult.class);
 
     OperationType(int opCode, Class requestOperationClazz, Class responseOperationClazz) {
         this.opCode = opCode;

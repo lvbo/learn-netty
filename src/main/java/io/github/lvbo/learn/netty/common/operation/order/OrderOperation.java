@@ -1,7 +1,7 @@
-package io.github.lvbo.learn.netty.common.order;
+package io.github.lvbo.learn.netty.common.operation.order;
 
-import io.github.lvbo.learn.netty.common.Operation;
-import io.github.lvbo.learn.netty.common.OperationResult;
+import io.github.lvbo.learn.netty.common.operation.Operation;
+import io.github.lvbo.learn.netty.common.operation.OperationResult;
 
 /**
  * @author lvbo

@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerIdleStateHanlder extends IdleStateHandler {
 
     public ServerIdleStateHanlder() {
-        super(20, 0, 0, TimeUnit.SECONDS);
+        super(5, 0, 0, TimeUnit.SECONDS);
     }
 
     @Override

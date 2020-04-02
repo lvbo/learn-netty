@@ -1,5 +1,8 @@
 package io.github.lvbo.learn.netty.common;
 
+import io.github.lvbo.learn.netty.common.operation.OperationResult;
+import io.github.lvbo.learn.netty.common.operation.OperationType;
+
 /**
  * @author lvbo
  * @version V1.0

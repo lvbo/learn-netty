@@ -1,7 +1,7 @@
 package io.github.lvbo.learn.netty.server.handler;
 
-import io.github.lvbo.learn.netty.common.Operation;
-import io.github.lvbo.learn.netty.common.OperationResult;
+import io.github.lvbo.learn.netty.common.operation.Operation;
+import io.github.lvbo.learn.netty.common.operation.OperationResult;
 import io.github.lvbo.learn.netty.common.RequestMessage;
 import io.github.lvbo.learn.netty.common.ResponseMessage;
 import io.netty.channel.ChannelHandlerContext;

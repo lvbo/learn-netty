@@ -3,15 +3,15 @@ package io.github.lvbo.learn.netty.client;
 import io.github.lvbo.learn.netty.client.codec.decoder.FrameDecoder;
 import io.github.lvbo.learn.netty.client.codec.decoder.ProcotolDecoder;
 import io.github.lvbo.learn.netty.client.codec.encoder.FrameEncoder;
-import io.github.lvbo.learn.netty.client.codec.encoder.OperationEncoder;
 import io.github.lvbo.learn.netty.client.codec.encoder.ProcotolEncoder;
+import io.github.lvbo.learn.netty.client.handler.ClientIdleStateHandler;
+import io.github.lvbo.learn.netty.client.handler.KeepaliveHandler;
 import io.github.lvbo.learn.netty.client.handler.OperationResponseHandler;
 import io.github.lvbo.learn.netty.client.handler.dispacher.OperationResultCenter;
 import io.github.lvbo.learn.netty.client.handler.dispacher.OperationResultPromise;
-import io.github.lvbo.learn.netty.common.Operation;
-import io.github.lvbo.learn.netty.common.OperationResult;
+import io.github.lvbo.learn.netty.common.operation.OperationResult;
 import io.github.lvbo.learn.netty.common.RequestMessage;
-import io.github.lvbo.learn.netty.common.order.OrderOperation;
+import io.github.lvbo.learn.netty.common.operation.order.OrderOperation;
 import io.github.lvbo.learn.netty.util.StreamIDGenerator;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -37,17 +37,22 @@ public class ClientV2 {
         OperationResultCenter operationResultCenter = new OperationResultCenter();
 
         NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+        LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
+        KeepaliveHandler keepaliveHandler = new KeepaliveHandler();
+
         try {
             bootstrap.group(eventLoopGroup);
             bootstrap.handler(new ChannelInitializer<NioSocketChannel>() {
                 @Override
                 protected void initChannel(NioSocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(new FrameDecoder())
+                    ch.pipeline().addLast(new ClientIdleStateHandler())
+                            .addLast(new FrameDecoder())
                             .addLast(new FrameEncoder())
                             .addLast(new ProcotolEncoder())
                             .addLast(new ProcotolDecoder())
                             .addLast(new OperationResponseHandler(operationResultCenter))
-                            .addLast(new LoggingHandler(LogLevel.INFO));
+                            .addLast(loggingHandler)
+                            .addLast(keepaliveHandler);
                 }
             });
             ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 8090);

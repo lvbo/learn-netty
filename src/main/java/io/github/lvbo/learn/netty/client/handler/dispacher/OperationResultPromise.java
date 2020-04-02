@@ -1,6 +1,6 @@
 package io.github.lvbo.learn.netty.client.handler.dispacher;
 
-import io.github.lvbo.learn.netty.common.OperationResult;
+import io.github.lvbo.learn.netty.common.operation.OperationResult;
 import io.netty.util.concurrent.DefaultPromise;
 
 /**
