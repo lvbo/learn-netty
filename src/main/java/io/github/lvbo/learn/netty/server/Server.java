@@ -15,6 +15,9 @@ import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.flush.FlushConsolidationHandler;
+import io.netty.handler.ipfilter.IpFilterRuleType;
+import io.netty.handler.ipfilter.IpSubnetFilterRule;
+import io.netty.handler.ipfilter.RuleBasedIpFilter;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
@@ -45,9 +48,13 @@ public class Server {
 
         LoggingHandler debugLoggingHandler = new LoggingHandler(LogLevel.DEBUG);
         LoggingHandler infoLoggingHandler = new LoggingHandler(LogLevel.INFO);
+
         GlobalTrafficShapingHandler globalTrafficShapingHandler = new GlobalTrafficShapingHandler(trafficSharpingGroup, 10 * 1024 * 1024, 10 * 1024 * 1024);
 
         MetricHandler metricHandler = new MetricHandler();
+
+        IpSubnetFilterRule ipSubnetFilterRule = new IpSubnetFilterRule("127.1.1.1", 16, IpFilterRuleType.REJECT);
+        RuleBasedIpFilter ruleBasedIpFilter = new RuleBasedIpFilter(ipSubnetFilterRule);
 
         try {
             serverBootstrap.group(bossGroup, workGroup);
@@ -56,6 +63,7 @@ public class Server {
                 protected void initChannel(NioSocketChannel ch) throws Exception {
                     ch.pipeline()
                             .addLast("debugLoggingHanlder", debugLoggingHandler)
+                            .addLast("ruleBasedIpFilter", ruleBasedIpFilter)
                             .addLast("idleHanlder", new ServerIdleStateHanlder())
                             .addLast("trafficSharpingHandler", globalTrafficShapingHandler)
                             .addLast("metricHandler", metricHandler)
