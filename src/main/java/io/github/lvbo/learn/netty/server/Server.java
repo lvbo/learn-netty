@@ -83,6 +83,8 @@ public class Server {
         } finally {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
+            businessGroup.shutdownGracefully();
+            trafficSharpingGroup.shutdownGracefully();
         }
     }
 }
