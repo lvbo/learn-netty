@@ -4,6 +4,7 @@ import io.github.lvbo.learn.netty.server.codec.decoder.FrameDecoder;
 import io.github.lvbo.learn.netty.server.codec.decoder.ProcotolDecoder;
 import io.github.lvbo.learn.netty.server.codec.encoder.FrameEncoder;
 import io.github.lvbo.learn.netty.server.codec.encoder.ProcotolEncoder;
+import io.github.lvbo.learn.netty.server.handler.AuthHandler;
 import io.github.lvbo.learn.netty.server.handler.MetricHandler;
 import io.github.lvbo.learn.netty.server.handler.OperationHandler;
 import io.github.lvbo.learn.netty.server.handler.ServerIdleStateHanlder;
@@ -56,6 +57,8 @@ public class Server {
         IpSubnetFilterRule ipSubnetFilterRule = new IpSubnetFilterRule("127.1.1.1", 16, IpFilterRuleType.REJECT);
         RuleBasedIpFilter ruleBasedIpFilter = new RuleBasedIpFilter(ipSubnetFilterRule);
 
+        AuthHandler authHandler = new AuthHandler();
+
         try {
             serverBootstrap.group(bossGroup, workGroup);
             serverBootstrap.childHandler(new ChannelInitializer<NioSocketChannel>() {
@@ -73,8 +76,8 @@ public class Server {
                             .addLast("procotolDecoder", new ProcotolDecoder())
                             .addLast("infoLoggingHandler", infoLoggingHandler)
                             .addLast("flushEnhance", new FlushConsolidationHandler(10, true))
+                            .addLast("authHandler", authHandler)
                             .addLast(businessGroup, new OperationHandler());
-
                 }
             });
 

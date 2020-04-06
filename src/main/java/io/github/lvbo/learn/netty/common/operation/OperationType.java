@@ -1,5 +1,7 @@
 package io.github.lvbo.learn.netty.common.operation;
 
+import io.github.lvbo.learn.netty.common.operation.auth.AuthOperation;
+import io.github.lvbo.learn.netty.common.operation.auth.AuthOperationResult;
 import io.github.lvbo.learn.netty.common.operation.keepalive.KeepaliveOperation;
 import io.github.lvbo.learn.netty.common.operation.keepalive.KeepaliveOperationResult;
 import io.github.lvbo.learn.netty.common.operation.order.OrderOperation;
@@ -12,6 +14,7 @@ import io.github.lvbo.learn.netty.common.operation.order.OrderOperationResult;
  */
 public enum OperationType {
     ORDER(3, OrderOperation.class, OrderOperationResult.class),
+    AUTH(2, AuthOperation.class, AuthOperationResult.class),
     KEEPALIVE(1,KeepaliveOperation.class, KeepaliveOperationResult.class);
 
     OperationType(int opCode, Class requestOperationClazz, Class responseOperationClazz) {

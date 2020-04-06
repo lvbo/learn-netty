@@ -11,6 +11,7 @@ import io.github.lvbo.learn.netty.client.handler.dispacher.OperationResultCenter
 import io.github.lvbo.learn.netty.client.handler.dispacher.OperationResultPromise;
 import io.github.lvbo.learn.netty.common.operation.OperationResult;
 import io.github.lvbo.learn.netty.common.RequestMessage;
+import io.github.lvbo.learn.netty.common.operation.auth.AuthOperation;
 import io.github.lvbo.learn.netty.common.operation.order.OrderOperation;
 import io.github.lvbo.learn.netty.util.StreamIDGenerator;
 import io.netty.bootstrap.Bootstrap;
@@ -58,8 +59,13 @@ public class ClientV2 {
             ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 8090);
             channelFuture.sync();
 
+
             long streamId = StreamIDGenerator.getNextStreamId();
-            RequestMessage requestMessage = new RequestMessage(streamId, new OrderOperation(999, "lvbo"));
+            RequestMessage requestMessage = new RequestMessage(streamId, new AuthOperation("admin", "admin"));
+            channelFuture.channel().writeAndFlush(requestMessage);
+
+            streamId = StreamIDGenerator.getNextStreamId();
+            requestMessage = new RequestMessage(streamId, new OrderOperation(999, "lvbo"));
 
             OperationResultPromise operationResultPromise = new OperationResultPromise();
             operationResultCenter.add(streamId, operationResultPromise);
